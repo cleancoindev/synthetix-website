@@ -38,6 +38,8 @@
 	"devDependencies": {
 		"@babel/core": "^7.8.0",
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
+		"@sanity/client": "^2.23.2",
+		"@sanity/types": "^2.24.0",
 		"@svgr/cli": "^5.5.0",
 		"@synthetixio/synpress": "0.9.25-beta.23",
 		"@testing-library/dom": "^8.11.0",

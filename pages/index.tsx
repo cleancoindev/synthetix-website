@@ -11,12 +11,22 @@ import styled from 'styled-components';
 import { Line } from 'src/styles/common';
 import PoweredBy from 'src/sections/home/poweredBy';
 import axios from 'axios';
+import sanityClient from '@sanity/client';
 
-export interface ApiStatsProps {
-	totalLocked?: number;
+export interface CMSContent {
+	mainSection: {
+		headline: string;
+		subline: string;
+		buttonText: string;
+	};
 }
 
-const Home = ({ totalLocked }: ApiStatsProps) => {
+export interface ApiStatsProps {
+	totalLocked: number;
+	cmsContent: CMSContent;
+}
+
+const Home = ({ totalLocked, cmsContent }: ApiStatsProps) => {
 	return (
 		<>
 			<Head>
@@ -24,7 +34,7 @@ const Home = ({ totalLocked }: ApiStatsProps) => {
 			</Head>
 			<PageLayout>
 				<BgGradient />
-				<MainSection />
+				<MainSection {...cmsContent.mainSection} />
 				<Line />
 				<TotalSection totalLocked={totalLocked} />
 				<Line />
@@ -60,17 +70,31 @@ const BgGradient = styled.div`
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	let totalLocked = 537861341;
+	let mainSection: Partial<CMSContent['mainSection']> = {};
 	try {
 		const response = await axios.get<{ totalLocked: number }>(
 			'https://exchange.api.synthetix.io/api/total-locked'
 		);
-		totalLocked = response.data?.totalLocked;
+		totalLocked = response.data?.totalLocked ? totalLocked : response.data.totalLocked;
+		const client = sanityClient({
+			projectId: '7gp7wzsf',
+			dataset: process.env.NODE_ENV === 'development' ? 'development' : 'production',
+			apiVersion: '2021-03-25',
+			useCdn: false,
+		});
+		const text = await client.fetch('*[_type == "landing-page"]');
+		mainSection.headline = text[0]?.headline;
+		mainSection.subline = text[0]?.subline;
+		mainSection.buttonText = text[0]?.buttonText;
 	} catch (e) {
 		console.log(e);
 	}
 	return {
 		props: {
 			totalLocked,
+			cmsContent: {
+				mainSection,
+			},
 		},
 	};
 };

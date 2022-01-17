@@ -1,3 +1,4 @@
+import { CMSContent } from 'pages';
 import { PageTitle, Section, Subline } from 'src/styles/common';
 import SNXWave from 'src/svg/SNXWave';
 import styled from 'styled-components';
@@ -5,20 +6,17 @@ import media from 'styled-media-query';
 import { headerHeight } from '../../components/Header';
 import { LearnMoreArrow } from '../../svg';
 
-const MainSection = () => {
+const MainSection = ({ buttonText, headline, subline }: CMSContent['mainSection']) => {
 	const scrollToFeaturesSection = () => {
 		document.querySelector('#futures')?.scrollIntoView({ behavior: 'smooth' });
 	};
 	return (
 		<MainContainer>
 			<Left>
-				<PageTitle>The derivatives liquidity protocol</PageTitle>
-				<SectionDescription>
-					Synthetix is a new financial primitive enabling the creation of synthetic assets, offering
-					unique derivatives and exposure to real-world assets on the blockchain.
-				</SectionDescription>
+				<PageTitle>{headline}</PageTitle>
+				<SectionDescription>{subline}</SectionDescription>
 				<LearnMoreButton onClick={scrollToFeaturesSection} data-test-id="learn-more-btn">
-					Learn More <LearnMoreArrow />
+					{buttonText} <LearnMoreArrow />
 				</LearnMoreButton>
 			</Left>
 			<Right />
